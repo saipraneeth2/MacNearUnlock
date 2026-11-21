@@ -192,9 +192,12 @@ final class AppModel: ObservableObject {
 
     fileprivate func appendLog(_ entry: EngineLogEntry) {
         if entry.level == .debug, !settings.debugLogging { return }
+        // Protocol events use `notice` (the default level) so macOS persists them
+        // to disk: `info` lives only in a small memory buffer and was dropped
+        // within minutes during hardware testing. Messages never contain secrets.
         switch entry.level {
-        case .security, .warning: logger.notice("\(entry.message, privacy: .public)")
-        case .info: logger.info("\(entry.message, privacy: .public)")
+        case .security, .warning: logger.notice("[\(entry.level.rawValue, privacy: .public)] \(entry.message, privacy: .public)")
+        case .info: logger.notice("\(entry.message, privacy: .public)")
         case .debug: logger.debug("\(entry.message, privacy: .public)")
         }
         logEntries.append(entry)

@@ -11,7 +11,7 @@
 | `MacNearUnlockMac` Release, unsigned | Build succeeded |
 | `MacNearUnlockiOS` Debug, iOS Simulator | Build succeeded, 0 warnings; launched in Simulator, empty state renders |
 | `MacNearUnlockiOS` Release, `generic/platform=iOS` (arm64), unsigned | Build succeeded |
-| `MacNearUnlockiOS` signed device build | **Blocked**: no Apple account signed into Xcode → no provisioning profile (see SETUP.md §1) |
+| `MacNearUnlockiOS` signed device build | Initially blocked (no Apple account in Xcode); after signing in, built with automatic provisioning and installed on an iPhone 16 Pro Max via `devicectl` |
 | Mac app smoke launch | Launched, created its Secure Enclave identity (login-keychain fallback), engine read real CGSession state (`unavailable → unlocked`), quit cleanly |
 
 The smoke launch found a real bug: without a keychain-access-group entitlement, a data-protection keychain *lookup* returns "not found" while a *write* returns `errSecMissingEntitlement`, so the original read-based probe chose the wrong keychain and identity creation failed. `KeychainStore` now probes with a write. A second real bug was found by `testLostConnectionInvalidatesPendingChallenge`: `FramedConnection.cancel()` captured `self` weakly, so a client that dropped its last reference never closed the socket and the Mac kept the challenge alive. Both are fixed and covered.
@@ -40,9 +40,28 @@ The smoke launch found a real bug: without a keychain-access-group entitlement, 
 
 Mocks: software P-256 keys stand in for the Secure Enclave, `FailingSigner` for a cancelled Face ID prompt, a fake session provider for CGSession, and a manual clock for time. Transport tests use **real** Network.framework TLS-PSK on 127.0.0.1.
 
-## Requires physical hardware (not executed)
+## Hardware results
 
-Run these on the real Mac mini and a Face ID iPhone. Record pass/fail in this file.
+**2026-11-21 — Mac mini (M4, Mac16,10), macOS 27.0.1, Dell 1080p display; iPhone 16 Pro Max, iOS 27.2.1 (24B156).** Mac app built from `7f6db2b`, iPhone app from `25eb7d1`, authentication-only mode on. Evidence is the Mac app's engine log (`log show --info --predicate 'subsystem == "MacNearUnlock"'`).
+
+| # | Result | Evidence |
+| --- | --- | --- |
+| H1 | **Pass** | Paired by QR at 15:39:15 (`Paired with iPhone`); iPhone authenticated over TLS-PSK one second later on port 47311 with Bonjour. |
+| H2 | **Pass** (from iPhone) after fix `25eb7d1` | 15:44:01 auth-test challenge issued → 15:44:03 `Approval VERIFIED for auth-test`. Mac-menu-initiated test not yet run. |
+| H8 | **Pass** | Locked 15:45:02; three separate `unlock-session` challenges each verified (15:45:07, 15:45:17, 15:45:28) with distinct request IDs; Mac stayed locked; unlocked by password at 15:45:37. Two more locked approvals verified at 15:51:21 and 15:53:08. |
+| H3 / H4 | **Pass** (Mac side) | Two Face ID failures/cancellations: 15:53:43 (`unlock-session`, Mac locked) and 15:54:47 (`auth-test`) each logged `declined on iPhone (biometricCancelled)`; nothing verified. The log cannot tell H3 from H4 apart. |
+| H9 | **Pass** | 15:54:55 challenge issued → 15:55:26 `Challenge … expired` (30 s lifetime); never verified. |
+| H10 | **Pass** (twice) | 15:56:36 challenge issued → 15:56:41 `Invalidated 1 pending challenge(s): Mac session changed` + `unlocked → unavailable (system will sleep)` → wake read as locked, then unlocked. Repeated 15:57:10 → 15:57:16. |
+| H16 | **Partial** | 15:56:04 iPhone dropped (`Operation timed out`, Wi‑Fi off) and re-authenticated at 15:56:10. No challenge was pending at the time, so invalidation-on-drop is not shown here (it is covered by `testLostConnectionInvalidatesPendingChallenge`). |
+| H2 (Mac menu), H13 | **Not observed** | No matching entries. The Mac log only had entries from 15:51:21 on: the app logged routine events at `info` level, which macOS keeps in a small memory buffer and drops quickly. |
+
+Bug found on hardware and fixed: the Face ID sheet makes the iOS scene `.inactive`, and the app closed its session for anything other than `.active`. Each challenge was invalidated by the Mac 1–2 s after issue and the iPhone reported `ClientError error 0` (not connected). Fixed in `25eb7d1` by ending sessions only on `.background`. Also fixed after the first real launch (`7f6db2b`): the menu-bar-only Mac app showed no window at all, so it looked like it had not started.
+
+Still to run: H2 from the Mac menu, H13 (with a request pending), H16 (with a request pending), H5–H7, H11, H12, H14, H15, H17, H18.
+
+## Hardware test plan
+
+Run these on the real Mac mini and a Face ID iPhone. Record pass/fail in the results table above.
 
 | # | Test | Expected |
 | --- | --- | --- |
