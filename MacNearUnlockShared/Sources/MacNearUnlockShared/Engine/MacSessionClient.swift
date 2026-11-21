@@ -9,10 +9,21 @@ public enum ClientConnectionState: Equatable, Sendable {
     case failed(String)
 }
 
-public enum ClientError: Error, Equatable, Sendable {
+public enum ClientError: LocalizedError, Equatable, Sendable {
     case notConnected
     case unknownRequest
     case requestExpired
+
+    public var errorDescription: String? {
+        switch self {
+        case .notConnected:
+            return "The connection to the Mac dropped before the approval was sent, so the Mac cancelled the request. Nothing was approved — tap the button again."
+        case .unknownRequest:
+            return "That request is no longer pending. Start a new one."
+        case .requestExpired:
+            return "That request expired. Start a new one."
+        }
+    }
 }
 
 /// iPhone side of a paired session. Connects with the pairing's TLS-PSK, proves and

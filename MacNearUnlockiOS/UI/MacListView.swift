@@ -10,10 +10,15 @@ struct MacNearUnlockiOSApp: App {
         WindowGroup {
             MacListView()
                 .environmentObject(model)
+                // Only `.background` ends the sessions. The Face ID sheet (and
+                // Control Center / Notification Center) make the scene
+                // `.inactive` while the app is still on screen; dropping the
+                // connection then made the Mac cancel the very request being
+                // approved.
                 .onChange(of: scenePhase) { _, phase in
-                    model.setActive(phase == .active)
+                    model.setActive(phase != .background)
                 }
-                .onAppear { model.setActive(scenePhase == .active) }
+                .onAppear { model.setActive(scenePhase != .background) }
         }
     }
 }

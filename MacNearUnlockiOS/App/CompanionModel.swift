@@ -159,8 +159,8 @@ final class CompanionModel: ObservableObject {
                 $0.message = error.localizedDescription
                 $0.messageIsError = true
             }
-        } catch ClientError.requestExpired {
-            update(id) { $0.request = nil; $0.message = "That request expired. Request again."; $0.messageIsError = true }
+        } catch let error as ClientError {
+            update(id) { $0.request = nil; $0.message = error.localizedDescription; $0.messageIsError = true }
         } catch {
             update(id) { $0.request = nil; $0.message = "Could not send approval: \(error.localizedDescription)"; $0.messageIsError = true }
         }
