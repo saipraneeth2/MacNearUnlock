@@ -1,0 +1,10 @@
+// MacNearUnlock shared build settings.
+//
+// Personal signing settings belong in Config/Local.xcconfig (gitignored). Copy
+// Config/Local.xcconfig.example and set your own team ID and bundle prefix.
+
+MNU_BUNDLE_PREFIX = com.example.macnearunlock
+DEVELOPMENT_TEAM =
+CODE_SIGN_STYLE = Automatic
+
+#include? "Local.xcconfig"

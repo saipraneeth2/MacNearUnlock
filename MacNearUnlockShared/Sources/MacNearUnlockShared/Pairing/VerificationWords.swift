@@ -1,0 +1,38 @@
+/// 256 short, distinct, easily pronounced words. One byte selects one word, so a
+/// four-word phrase carries 32 bits. Original list written for this project.
+public enum VerificationWords {
+    public static let list: [String] = [
+        "acorn", "adobe", "agent", "alarm", "album", "alpha", "amber", "anchor",
+        "angle", "apple", "apron", "arrow", "aspen", "atlas", "attic", "autumn",
+        "badge", "bagel", "bamboo", "banjo", "barley", "basin", "beacon", "berry",
+        "bison", "blaze", "bloom", "bonsai", "border", "bottle", "branch", "breeze",
+        "brick", "bridge", "bronze", "brook", "bubble", "bucket", "buffalo", "button",
+        "cabin", "cactus", "camel", "candle", "canoe", "canyon", "carbon", "carrot",
+        "castle", "cedar", "cello", "cherry", "chess", "cider", "cinema", "circle",
+        "citrus", "clover", "cobalt", "cocoa", "comet", "compass", "coral", "cotton",
+        "cradle", "crane", "crater", "crayon", "cricket", "crystal", "cupcake", "cypress",
+        "daisy", "delta", "denim", "desert", "diamond", "dolphin", "domino", "dragon",
+        "drum", "eagle", "echo", "eclipse", "elbow", "ember", "emerald", "engine",
+        "falcon", "feather", "fennel", "ferry", "fiddle", "fig", "flame", "flute",
+        "forest", "fossil", "fountain", "fox", "galaxy", "garden", "garlic", "gazelle",
+        "geyser", "ginger", "glacier", "globe", "granite", "grape", "gravel", "guitar",
+        "hammer", "harbor", "harvest", "hazel", "helmet", "heron", "hickory", "honey",
+        "horizon", "iceberg", "igloo", "indigo", "iris", "island", "ivory", "jacket",
+        "jaguar", "jasmine", "jelly", "jigsaw", "juniper", "kayak", "kernel", "kettle",
+        "kiwi", "koala", "ladder", "lagoon", "lantern", "laurel", "lemon", "lentil",
+        "lilac", "lime", "linen", "lizard", "lobster", "locket", "lotus", "lumber",
+        "lunar", "magnet", "mango", "maple", "marble", "meadow", "melon", "meteor",
+        "mint", "mirror", "mitten", "monsoon", "mosaic", "moss", "mountain", "muffin",
+        "nectar", "needle", "nickel", "noodle", "nutmeg", "oasis", "ocean", "olive",
+        "onion", "opal", "orange", "orbit", "orchid", "otter", "oyster", "paddle",
+        "panda", "paper", "parsley", "peach", "pebble", "pelican", "pepper", "piano",
+        "pickle", "pigeon", "pillow", "pine", "pixel", "planet", "plum", "polar",
+        "pony", "poppy", "prism", "pumpkin", "puzzle", "quartz", "quill", "rabbit",
+        "radar", "radish", "raven", "reef", "ribbon", "river", "robin", "rocket",
+        "saddle", "saffron", "salmon", "sapphire", "satin", "scarf", "shadow", "shell",
+        "silver", "sketch", "sled", "sparrow", "spice", "spruce", "squash", "stone",
+        "summit", "sunset", "swan", "tango", "teapot", "thistle", "thunder", "tiger",
+        "timber", "tomato", "topaz", "tulip", "tundra", "turtle", "umbrella", "valley",
+        "velvet", "violet", "walnut", "willow", "window", "yarrow", "zebra", "zephyr",
+    ]
+}
