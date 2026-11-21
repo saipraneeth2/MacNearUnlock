@@ -87,7 +87,6 @@ struct GeneralSettingsView: View {
 
 struct DevicesSettingsView: View {
     @EnvironmentObject private var model: AppModel
-    @Environment(\.openWindow) private var openWindow
     @State private var pendingRevoke: PairedDeviceRecord?
 
     var body: some View {
@@ -122,8 +121,7 @@ struct DevicesSettingsView: View {
             }
             Section {
                 Button {
-                    NSApp.activate()
-                    openWindow(id: "pairing")
+                    model.showPairingWindow()
                 } label: {
                     Label("Pair New iPhone…", systemImage: "qrcode")
                 }

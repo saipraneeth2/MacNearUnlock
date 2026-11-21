@@ -17,6 +17,8 @@ final class AppModel: ObservableObject {
         case failed(String)
     }
 
+    static let shared = AppModel()
+
     let settings: AppSettings
     let keychain: KeychainStore
     let identity: MacIdentity?
@@ -42,6 +44,7 @@ final class AppModel: ObservableObject {
     private var pairingBridge: PairingBridge?
     private let monitor = SessionEventMonitor()
     private let pill = PillOverlayController()
+    private let pairingWindow = PairingWindowPresenter()
     let departure: DepartureLockController
     private var isSleeping = false
     private var cancellables: Set<AnyCancellable> = []
@@ -74,6 +77,27 @@ final class AppModel: ObservableObject {
     }
 
     var connectedCount: Int { devices.filter { connected.contains($0.pairingID) }.count }
+
+    // MARK: Discoverability
+
+    func showPairingWindow() {
+        pairingWindow.show(model: self)
+    }
+
+    func presentAfterLaunch() {
+        if settings.showPill {
+            pill.showHint(title: "MacNearUnlock is running", subtitle: "Click the lock icon in the menu bar, top right")
+        }
+        if devices.isEmpty { showPairingWindow() }
+    }
+
+    func presentOnReopen() {
+        if devices.isEmpty {
+            showPairingWindow()
+        } else {
+            pill.showHint(title: "MacNearUnlock is running", subtitle: "Click the lock icon in the menu bar, top right")
+        }
+    }
 
     // MARK: Engine
 

@@ -6,7 +6,8 @@ import SwiftUI
 
 struct PairingWindowView: View {
     @EnvironmentObject private var model: AppModel
-    @Environment(\.dismissWindow) private var dismissWindow
+    /// Closes the hosting window (provided by `PairingWindowPresenter`).
+    var onClose: () -> Void
 
     var body: some View {
         VStack(spacing: 18) {
@@ -46,6 +47,10 @@ struct PairingWindowView: View {
 
     @ViewBuilder
     private func waiting(_ invitation: PairingInvitation) -> some View {
+        Label("MacNearUnlock runs in the menu bar — look for the lock icon at the top right of your screen.", systemImage: "menubar.arrow.up.rectangle")
+            .font(.callout)
+            .foregroundStyle(.secondary)
+            .fixedSize(horizontal: false, vertical: true)
         Text("Pair an iPhone").font(.title2.bold())
         Text("In MacNearUnlock on your iPhone, tap + and scan this code.")
             .foregroundStyle(.secondary)
@@ -105,7 +110,7 @@ struct PairingWindowView: View {
 
     private func close() {
         model.cancelPairing()
-        dismissWindow(id: "pairing")
+        onClose()
     }
 }
 

@@ -5,7 +5,6 @@ import SwiftUI
 struct MenuBarContentView: View {
     @EnvironmentObject private var model: AppModel
     @EnvironmentObject private var settings: AppSettings
-    @Environment(\.openWindow) private var openWindow
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
@@ -67,8 +66,7 @@ struct MenuBarContentView: View {
             .help("Asks connected iPhones to approve an authentication test. Never unlocks the Mac.")
 
             Button {
-                NSApp.activate()
-                openWindow(id: "pairing")
+                model.showPairingWindow()
             } label: {
                 Label("Pair iPhone…", systemImage: "qrcode")
             }

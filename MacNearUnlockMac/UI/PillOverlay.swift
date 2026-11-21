@@ -17,6 +17,15 @@ final class PillOverlayController {
 
     func show(state: UnlockState, detail: String? = nil) {
         guard let content = PillContent(state: state, detail: detail) else { return }
+        show(content)
+    }
+
+    /// Informational message (for example "running in the menu bar").
+    func showHint(title: String, subtitle: String) {
+        show(PillContent(symbol: "lock.shield", title: title, subtitle: subtitle, tint: .accentColor, isTerminal: true, pulses: false))
+    }
+
+    private func show(_ content: PillContent) {
         model.content = content
         let panel = self.panel ?? makePanel()
         self.panel = panel
@@ -94,7 +103,7 @@ struct PillContent: Equatable {
         }
     }
 
-    private init(symbol: String, title: String, subtitle: String, tint: Color, isTerminal: Bool, pulses: Bool) {
+    init(symbol: String, title: String, subtitle: String, tint: Color, isTerminal: Bool, pulses: Bool) {
         self.symbol = symbol
         self.title = title
         self.subtitle = subtitle

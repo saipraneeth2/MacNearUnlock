@@ -4,7 +4,8 @@ import SwiftUI
 
 @main
 struct MacNearUnlockApp: App {
-    @StateObject private var model = AppModel()
+    @NSApplicationDelegateAdaptor(AppDelegate.self) private var appDelegate
+    @StateObject private var model = AppModel.shared
 
     var body: some Scene {
         MenuBarExtra {
@@ -22,13 +23,20 @@ struct MacNearUnlockApp: App {
                 .environmentObject(model.settings)
                 .environmentObject(model.adapter)
         }
+    }
+}
 
-        Window("Pair iPhone", id: "pairing") {
-            PairingWindowView()
-                .environmentObject(model)
-        }
-        .windowResizability(.contentSize)
-        .defaultPosition(.center)
+/// A menu-bar-only app has no window or Dock icon, so make it discoverable:
+/// on launch show a hint (and the pairing window if nothing is paired yet), and
+/// do the same when the user opens the app again while it is already running.
+final class AppDelegate: NSObject, NSApplicationDelegate {
+    func applicationDidFinishLaunching(_ notification: Notification) {
+        DispatchQueue.main.async { AppModel.shared.presentAfterLaunch() }
+    }
+
+    func applicationShouldHandleReopen(_ sender: NSApplication, hasVisibleWindows flag: Bool) -> Bool {
+        AppModel.shared.presentOnReopen()
+        return false
     }
 }
 
