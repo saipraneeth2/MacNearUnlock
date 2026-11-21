@@ -7,4 +7,8 @@ MNU_BUNDLE_PREFIX = com.example.macnearunlock
 DEVELOPMENT_TEAM =
 CODE_SIGN_STYLE = Automatic
 
+// App icon: each app's Assets.xcassets/AppIcon.appiconset (regenerate with
+// `swift tools/make_icon.swift` from the repository root).
+ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon
+
 #include? "Local.xcconfig"

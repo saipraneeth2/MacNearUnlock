@@ -1,3 +1,5 @@
+<img src="docs/logo.png" width="128" alt="MacNearUnlock icon: an open padlock with a scan frame and a check mark">
+
 # MacNearUnlock
 
 Approve access to your **already logged-in, locked** Mac from your nearby iPhone with a real Face ID match — built honestly around what Apple's public APIs allow.
