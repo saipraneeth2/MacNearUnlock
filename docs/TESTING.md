@@ -53,11 +53,14 @@ Mocks: software P-256 keys stand in for the Secure Enclave, `FailingSigner` for 
 | H9 | **Pass** | 15:54:55 challenge issued → 15:55:26 `Challenge … expired` (30 s lifetime); never verified. |
 | H10 | **Pass** (twice) | 15:56:36 challenge issued → 15:56:41 `Invalidated 1 pending challenge(s): Mac session changed` + `unlocked → unavailable (system will sleep)` → wake read as locked, then unlocked. Repeated 15:57:10 → 15:57:16. |
 | H16 | **Partial** | 15:56:04 iPhone dropped (`Operation timed out`, Wi‑Fi off) and re-authenticated at 15:56:10. No challenge was pending at the time, so invalidation-on-drop is not shown here (it is covered by `testLostConnectionInvalidatesPendingChallenge`). |
-| H2 (Mac menu), H13 | **Not observed** | No matching entries. The Mac log only had entries from 15:51:21 on: the app logged routine events at `info` level, which macOS keeps in a small memory buffer and drops quickly. |
+| H2 (Mac menu), H13 | **Not observed** | No matching entries. The Mac log only had entries from 15:51:21 on: the app logged routine events at `info` level, which macOS keeps in a small memory buffer and drops quickly (fixed in `f96a414`). |
+| H5 | **Pass** | 16:08:48 and 16:08:59 `declined (biometricCancelled)` after failed matches; then 16:09:15, 16:09:17 and 16:09:24 each `declined (biometricLockout)` within 0–3 s of issue (no prompt possible while locked out); nothing verified. Two manual Decline taps logged as `userDeclined`. |
+| H17 | **Pass** | Accessibility granted manually. `Test Lock Now` locked the Mac and CGSession confirmed it (16:21:07, 16:23:44). First automatic attempt did not fire because the option was not on when the iPhone left; a countdown log line was added. Retest: iPhone disconnected 16:27:45 → `Lock on departure armed: locking in 15s` → 16:28:01 `locking` → `unlocked → locked` → 16:28:02 `Screen locked`; unlocked by password 16:28:08; option turned off afterwards. Triggered by the iPhone app going to the Home Screen, confirming it is a connectivity signal, not proximity. |
+| H12 | **Pass** (restart); log-out step not observed | Restarted 16:04:36 with FileVault on (`fdesetup status`). No MacNearUnlock activity between boot and console login at 16:05. `backgroundtaskmanagementd` listed the SMAppService login item at 16:05:13; `launchd` spawned the app at 16:05:32; the iPhone re-authenticated at 16:05:44. No separate log-out session appears in `last` (the 16:02:15 lock/unlock kept the same app process). |
 
 Bug found on hardware and fixed: the Face ID sheet makes the iOS scene `.inactive`, and the app closed its session for anything other than `.active`. Each challenge was invalidated by the Mac 1–2 s after issue and the iPhone reported `ClientError error 0` (not connected). Fixed in `25eb7d1` by ending sessions only on `.background`. Also fixed after the first real launch (`7f6db2b`): the menu-bar-only Mac app showed no window at all, so it looked like it had not started.
 
-Still to run: H2 from the Mac menu, H13 (with a request pending), H16 (with a request pending), H5–H7, H11, H12, H14, H15, H17, H18.
+Still to run: H2 from the Mac menu, H13 (with a request pending), H16 (with a request pending), H12 log-out step, H6, H7, H11, H14, H15, H18.
 
 ## Hardware test plan
 

@@ -216,7 +216,11 @@ struct SecuritySettingsView: View {
             } header: {
                 Text("Lock on departure (off by default)")
             } footer: {
-                if !settings.departureLockTested { Text("Run a successful test lock before this can be enabled.") }
+                if !settings.departureLockTested {
+                    Text("Run a successful test lock before this can be enabled.")
+                } else {
+                    Text("The countdown starts when the last connected iPhone disconnects, so turn this on while the iPhone app is open and connected.")
+                }
             }
 
             Section {

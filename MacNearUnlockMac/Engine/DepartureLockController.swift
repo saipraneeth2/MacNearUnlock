@@ -25,13 +25,27 @@ final class DepartureLockController {
     func connectedDevicesChanged(_ connected: Set<UUID>, lockState: MacLockState) {
         if !connected.isEmpty {
             sawConnection = true
+            if pending != nil {
+                log?(.info, "Lock on departure cancelled: a paired iPhone reconnected")
+            }
             pending?.cancel()
             pending = nil
             return
         }
-        guard sawConnection, settings.lockOnDeparture, settings.departureLockTested, lockState == .unlocked else { return }
+        guard sawConnection else { return }
+        // Every outcome below is logged so a hardware test can tell "not armed"
+        // apart from "armed but failed to lock".
+        guard settings.lockOnDeparture, settings.departureLockTested else {
+            log?(.info, "No paired iPhone connected; lock on departure is off")
+            return
+        }
+        guard lockState == .unlocked else {
+            log?(.info, "No paired iPhone connected; Mac not unlocked (\(lockState.rawValue)), lock on departure not armed")
+            return
+        }
         sawConnection = false
         let grace = settings.departureGrace
+        log?(.info, "Lock on departure armed: locking in \(Int(grace))s unless a paired iPhone reconnects")
         pending?.cancel()
         pending = Task { [weak self] in
             try? await Task.sleep(nanoseconds: UInt64(grace * 1_000_000_000))
