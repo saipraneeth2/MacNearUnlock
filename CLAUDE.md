@@ -8,8 +8,11 @@ Security-sensitive project: an iPhone Face ID approval protocol for a locked Mac
 cd MacNearUnlockShared && swift test                       # 82 tests, ~10 s, no signing needed
 xcodebuild -project MacNearUnlock.xcodeproj -scheme MacNearUnlockMac -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
 xcodebuild -project MacNearUnlock.xcodeproj -scheme MacNearUnlockiOS -destination 'generic/platform=iOS Simulator' CODE_SIGNING_ALLOWED=NO build
-cd MacNearUnlockShared && xcodebuild test -scheme MacNearUnlockShared -destination 'platform=iOS Simulator,name=iPhone 17 Pro'
+cd MacNearUnlockShared && xcodebuild test -scheme MacNearUnlockShared -destination 'platform=macOS'
+cd MacNearUnlockShared && xcodebuild test -scheme MacNearUnlockShared -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.2'
 ```
+
+The Simulator name must exist for the iOS version given (`xcodebuild -showdestinations -scheme MacNearUnlockShared` lists them). If Xcode lists no Simulators at all, boot one once with `xcrun simctl boot <id>` and retry.
 
 Signing settings live in `Config/Local.xcconfig` (gitignored; template `Config/Local.xcconfig.example`). Never commit a team ID or personal bundle prefix.
 

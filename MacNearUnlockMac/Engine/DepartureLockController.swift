@@ -2,7 +2,7 @@ import CoreGraphics
 import Foundation
 import MacNearUnlockShared
 
-/// "Lock on departure" — OFF by default and impossible to enable until a manual
+/// "Lock on departure": OFF by default and impossible to enable until a manual
 /// test lock succeeded on this Mac.
 ///
 /// Honest limits: the trigger is "no paired iPhone has an authenticated connection
@@ -51,7 +51,7 @@ final class DepartureLockController {
             try? await Task.sleep(nanoseconds: UInt64(grace * 1_000_000_000))
             guard !Task.isCancelled, let self, self.settings.lockOnDeparture else { return }
             guard CGSessionStateProvider().snapshot().lockState == .unlocked else { return }
-            self.log?(.security, "Lock on departure: no paired iPhone connected for \(Int(grace))s — locking")
+            self.log?(.security, "Lock on departure: no paired iPhone connected for \(Int(grace))s; locking")
             let locked = await Self.lockScreen()
             self.log?(locked ? .info : .warning, locked ? "Screen locked" : "Lock on departure could not confirm the screen locked")
         }

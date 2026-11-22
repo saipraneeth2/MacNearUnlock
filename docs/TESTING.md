@@ -6,13 +6,16 @@
 | --- | --- |
 | `swift test` in `MacNearUnlockShared` | **82 tests, 0 failures** (~7.5 s) |
 | `xcodebuild test -scheme MacNearUnlockShared -destination 'platform=macOS'` | **82 / 0** |
-| `xcodebuild test … -destination 'platform=iOS Simulator,name=iPhone 17 Pro'` (iOS 27.2) | **82 / 0**, includes the TLS-PSK loopback tests on the iOS runtime |
-| `MacNearUnlockMac` Debug, signed (Apple Development, manual, hardened runtime) | Build succeeded, 0 warnings; `codesign --verify --deep --strict` OK |
+| `xcodebuild test … -destination 'platform=iOS Simulator,name=iPhone 18 Pro,OS=27.2'` | **82 / 0**, includes the TLS-PSK loopback tests on the iOS runtime |
+| `xcodebuild test … -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=26.4'` | **82 / 0**. This is the Simulator the first run used; it was recorded as iOS 27.2 by mistake (this Mac has no iPhone 17 Pro Simulator on iOS 27.2). |
+| `MacNearUnlockMac` Debug, signed (Apple Development, manual, hardened runtime) | Build succeeded, 0 compiler warnings; `codesign --verify --deep --strict` OK |
 | `MacNearUnlockMac` Release, unsigned | Build succeeded |
-| `MacNearUnlockiOS` Debug, iOS Simulator | Build succeeded, 0 warnings; launched in Simulator, empty state renders |
+| `MacNearUnlockiOS` Debug, iOS Simulator | Build succeeded, 0 compiler warnings; launched in Simulator, empty state renders |
 | `MacNearUnlockiOS` Release, `generic/platform=iOS` (arm64), unsigned | Build succeeded |
 | `MacNearUnlockiOS` signed device build | Initially blocked (no Apple account in Xcode); after signing in, built with automatic provisioning and installed on an iPhone 16 Pro Max via `devicectl` |
 | Mac app smoke launch | Launched, created its Secure Enclave identity (login-keychain fallback), engine read real CGSession state (`unavailable → unlocked`), quit cleanly |
+
+Re-verified on 2026-11-21 after `d0bcf66` and the removal of em dashes from the Swift sources (wording only): all four test runs above passed 82 of 82, and clean signed Debug builds of both apps (`MacNearUnlockMac` for macOS, `MacNearUnlockiOS` for `generic/platform=iOS`) succeeded with 0 compiler warnings. Each app build also prints one Xcode tool notice, `appintentsmetadataprocessor: warning: Metadata extraction skipped, no AppIntents.framework dependency found`. Xcode emits it for any app that does not use App Intents; it does not come from project code.
 
 The smoke launch found a real bug: without a keychain-access-group entitlement, a data-protection keychain *lookup* returns "not found" while a *write* returns `errSecMissingEntitlement`, so the original read-based probe chose the wrong keychain and identity creation failed. `KeychainStore` now probes with a write. A second real bug was found by `testLostConnectionInvalidatesPendingChallenge`: `FramedConnection.cancel()` captured `self` weakly, so a client that dropped its last reference never closed the socket and the Mac kept the challenge alive. Both are fixed and covered.
 

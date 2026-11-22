@@ -47,7 +47,7 @@ struct PairingWindowView: View {
 
     @ViewBuilder
     private func waiting(_ invitation: PairingInvitation) -> some View {
-        Label("MacNearUnlock runs in the menu bar — look for the lock icon at the top right of your screen.", systemImage: "menubar.arrow.up.rectangle")
+        Label("MacNearUnlock runs in the menu bar: look for the lock icon at the top right of your screen.", systemImage: "menubar.arrow.up.rectangle")
             .font(.callout)
             .foregroundStyle(.secondary)
             .fixedSize(horizontal: false, vertical: true)

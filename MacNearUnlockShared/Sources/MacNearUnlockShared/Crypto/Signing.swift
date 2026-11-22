@@ -4,12 +4,12 @@ import Foundation
 /// Produces ECDSA P-256 / SHA-256 signatures in DER (X9.62) form.
 ///
 /// Implementations:
-/// * `SecureEnclaveIdentitySigner` — Mac identity key (Secure Enclave, no biometry,
+/// * `SecureEnclaveIdentitySigner`: Mac identity key (Secure Enclave, no biometry,
 ///   because a Mac mini has no Touch ID and must sign challenges while locked).
-/// * iPhone `BiometricSigner` (in the iOS target) — Secure Enclave key with
+/// * iPhone `BiometricSigner` (in the iOS target): Secure Enclave key with
 ///   `.biometryCurrentSet`; every signature requires a fresh Face ID match that the
 ///   Secure Enclave itself enforces.
-/// * `SoftwareP256Signer` — tests and Macs without a Secure Enclave.
+/// * `SoftwareP256Signer`: tests and Macs without a Secure Enclave.
 public protocol MessageSigner: AnyObject, Sendable {
     /// X9.63 uncompressed public key (65 bytes).
     var publicKeyX963: Data { get }
@@ -81,7 +81,7 @@ public final class SoftwareP256Signer: MessageSigner, @unchecked Sendable {
 }
 
 /// Mac identity key held in the Secure Enclave. `dataRepresentation` is an opaque
-/// blob encrypted by this Mac's Secure Enclave — it is not the private key and is
+/// blob encrypted by this Mac's Secure Enclave; it is not the private key and is
 /// useless on any other device.
 public final class SecureEnclaveIdentitySigner: MessageSigner, @unchecked Sendable {
     private let privateKey: SecureEnclave.P256.Signing.PrivateKey

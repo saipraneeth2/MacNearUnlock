@@ -49,7 +49,7 @@ struct MacListView: View {
                     if !model.pairings.isEmpty { Text("Trusted Macs") }
                 } footer: {
                     if !model.pairings.isEmpty {
-                        Text("Approvals work only while this app is open on screen, and each one needs Face ID. Macs are found on your local network — that means reachable, not necessarily nearby.")
+                        Text("Approvals work only while this app is open on screen, and each one needs Face ID. Macs are found on your local network; that means reachable, not necessarily nearby.")
                     }
                 }
 

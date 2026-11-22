@@ -11,7 +11,7 @@ import Security
 /// * AEAD record protection.
 ///
 /// TLS 1.3 external PSKs are not accepted by Network.framework on the SDKs tested
-/// (handshake fails), so 1.2 is pinned deliberately — see docs/PROTOCOL.md.
+/// (handshake fails), so 1.2 is pinned deliberately (see docs/PROTOCOL.md).
 public enum TLSPSK {
     public static let cipherSuiteRawValue: UInt16 = 0xCCAC
 
@@ -52,7 +52,7 @@ extension Data {
 /// Length-prefixed, validated message channel over an `NWConnection`.
 ///
 /// All callbacks run on `queue`. Any framing, decoding, validation or rate-limit
-/// violation closes the connection — there is no partial recovery from hostile input.
+/// violation closes the connection; there is no partial recovery from hostile input.
 public final class FramedConnection: @unchecked Sendable {
     public let connection: NWConnection
     public let queue: DispatchQueue

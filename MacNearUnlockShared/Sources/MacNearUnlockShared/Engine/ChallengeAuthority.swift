@@ -62,8 +62,8 @@ public enum ApprovalRejection: Error, Equatable, Sendable {
 }
 
 /// Proof that one specific challenge received a valid, fresh approval. Only
-/// `ChallengeAuthority` can create one (internal initializer), so downstream code —
-/// notably the experimental credential adapter — cannot run without it.
+/// `ChallengeAuthority` can create one (internal initializer), so downstream code,
+/// notably the experimental credential adapter, cannot run without it.
 public final class VerifiedApproval: @unchecked Sendable {
     public let request: UnlockRequest
     public let verifiedAt: MonotonicInstant

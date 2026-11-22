@@ -1,6 +1,6 @@
 // swift-tools-version: 6.0
 //
-// MacNearUnlockShared — protocol, canonical encoding, cryptographic verification,
+// MacNearUnlockShared: protocol, canonical encoding, cryptographic verification,
 // pairing, transport and engine logic shared by the macOS menu bar app and the
 // iPhone companion. Everything here is platform-neutral and unit-testable with
 // `swift test` on a Mac without code signing or physical hardware.

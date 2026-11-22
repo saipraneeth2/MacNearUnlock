@@ -17,7 +17,7 @@ public enum ClientError: LocalizedError, Equatable, Sendable {
     public var errorDescription: String? {
         switch self {
         case .notConnected:
-            return "The connection to the Mac dropped before the approval was sent, so the Mac cancelled the request. Nothing was approved — tap the button again."
+            return "The connection to the Mac dropped before the approval was sent, so the Mac cancelled the request. Nothing was approved; tap the button again."
         case .unknownRequest:
             return "That request is no longer pending. Start a new one."
         case .requestExpired:

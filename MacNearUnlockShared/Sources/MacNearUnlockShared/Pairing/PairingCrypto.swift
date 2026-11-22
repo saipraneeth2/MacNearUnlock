@@ -18,11 +18,11 @@ public enum PairingError: Error, Equatable, Sendable {
 
 /// Out-of-band pairing invitation shown by the Mac as a QR code and as a typed code.
 ///
-/// * `code` — 80-bit one-time secret. It keys the pairing TLS-PSK tunnel, so only
+/// * `code`: 80-bit one-time secret. It keys the pairing TLS-PSK tunnel, so only
 ///   someone who saw the Mac's screen can even reach the pairing protocol. The
 ///   Mac burns the invitation after `MNUProtocol.maxPairingHandshakeFailures` failed
 ///   TLS handshakes or after `MNUProtocol.pairingWindow` seconds.
-/// * `macFingerprint` — SHA-256 of the Mac identity key, present only in the QR
+/// * `macFingerprint`: SHA-256 of the Mac identity key, present only in the QR
 ///   code. The iPhone refuses a Mac key that does not match it.
 public struct PairingInvitation: Equatable, Sendable {
     public static let codeLength = 10

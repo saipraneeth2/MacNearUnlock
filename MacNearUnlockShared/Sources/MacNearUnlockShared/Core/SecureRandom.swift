@@ -54,7 +54,7 @@ extension UUID {
         withUnsafeBytes(of: uuid) { Data($0) }
     }
 
-    /// First 8 hex characters — enough to correlate log lines without logging
+    /// First 8 hex characters: enough to correlate log lines without logging
     /// complete identifiers.
     public var shortID: String {
         String(uuidString.prefix(8))

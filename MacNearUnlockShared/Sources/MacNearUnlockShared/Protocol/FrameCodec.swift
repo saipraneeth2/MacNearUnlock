@@ -11,7 +11,7 @@ public enum FrameError: Error, Equatable, Sendable {
 /// Length-prefixed framing: `u32be(length) | JSON(WireMessage)`.
 ///
 /// JSON is used only as a transport container. Nothing is ever signed or verified
-/// over JSON bytes — signatures cover `CanonicalWriter` output rebuilt locally.
+/// over JSON bytes; signatures cover `CanonicalWriter` output rebuilt locally.
 public enum FrameCodec {
     public static let headerLength = 4
 

@@ -177,8 +177,8 @@ final class AppModel: ObservableObject {
     fileprivate func engineVerified(_ approval: VerifiedApproval, authOnly: Bool) {
         let name = devices.first { $0.pairingID == approval.pairingID }?.deviceName ?? "iPhone"
         if authOnly {
-            lastResult = "\(approval.action == .authenticationTest ? "Test approval" : "Unlock approval") verified from \(name) at \(Date().formatted(date: .omitted, time: .standard)) — authentication only, login state unchanged."
-            if settings.showPill { pill.show(state: .verified, detail: "Authentication only — Mac not unlocked") }
+            lastResult = "\(approval.action == .authenticationTest ? "Test approval" : "Unlock approval") verified from \(name) at \(Date().formatted(date: .omitted, time: .standard)); authentication only, login state unchanged."
+            if settings.showPill { pill.show(state: .verified, detail: "Authentication only: Mac not unlocked") }
         } else if let engine {
             lastResult = "Unlock approval verified from \(name); handed to experimental adapter."
             adapter.handle(approval, engine: engine, sessionProvider: sessionProvider, systemSleeping: isSleeping)
@@ -262,7 +262,7 @@ final class AppModel: ObservableObject {
         let message: String
         switch error {
         case .expired: message = "The invitation expired. Start again."
-        case .fingerprintMismatch: message = "The iPhone saw a different Mac key than the QR code. Possible interception — pairing stopped."
+        case .fingerprintMismatch: message = "The iPhone saw a different Mac key than the QR code. Possible interception, so pairing stopped."
         case .badConfirmationSignature, .badTranscriptSignature, .badCompletionSignature: message = "A pairing signature did not verify. Pairing stopped."
         case .aborted(let reason): message = reason
         case .storageFailed: message = "The pairing could not be saved to the Keychain."

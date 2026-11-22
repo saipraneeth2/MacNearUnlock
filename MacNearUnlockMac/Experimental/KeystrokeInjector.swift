@@ -1,17 +1,17 @@
 //
 //  KeystrokeInjector.swift
-//  MacNearUnlock — EXPERIMENTAL credential adapter
+//  MacNearUnlock: EXPERIMENTAL credential adapter
 //
 //  Adapted from Glance's KeystrokeInjector.swift
 //  (https://github.com/jonnyoo/glance), Copyright (c) 2026 Jonathan Zhou,
-//  MIT License — see THIRD_PARTY_NOTICES.md. Changes: no Accessibility prompting
+//  MIT License (see THIRD_PARTY_NOTICES.md). Changes: no Accessibility prompting
 //  (the user grants it manually in System Settings), explicit preflight of both
 //  Accessibility and event-posting access, UTF-16 buffer wiped after use, and the
 //  caller must hold a consumed `VerifiedApproval` (enforced by the adapter).
 //
 //  What this is: synthetic keyboard events posted at the HID event tap so that a
-//  focused secure text field — the lock screen's password field, when it has focus
-//  — receives them. It is NOT a macOS authentication API. Whether loginwindow
+//  focused secure text field (the lock screen's password field, when it has focus)
+//  receives them. It is NOT a macOS authentication API. Whether loginwindow
 //  accepts synthetic events can change in any macOS release; it never works at the
 //  FileVault pre-boot screen or the login window after restart/logout (this app is
 //  not running there).

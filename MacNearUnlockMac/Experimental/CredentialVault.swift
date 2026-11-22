@@ -1,6 +1,6 @@
 //
 //  CredentialVault.swift
-//  MacNearUnlock — EXPERIMENTAL credential adapter
+//  MacNearUnlock: EXPERIMENTAL credential adapter
 //
 //  Stores the macOS login password ONLY after explicit local opt-in. Design:
 //
@@ -11,7 +11,7 @@
 //    hardware; the ciphertext is useless on any other Mac.
 //  * Decrypting requires local user presence ON THE MAC (login-password dialog,
 //    Apple Watch, or Touch ID if a Touch ID keyboard exists). An iPhone Face ID
-//    approval does NOT and cannot satisfy that — it is a separate device.
+//    approval does NOT and cannot satisfy that; it is a separate device.
 //  * Because a Mac mini has no biometrics and nothing can prompt on the lock screen,
 //    the user "arms" the vault once while unlocked: one local authentication derives
 //    the wrapping key, which stays only in this process's memory for at most

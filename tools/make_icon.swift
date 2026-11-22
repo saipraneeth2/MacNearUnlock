@@ -6,7 +6,7 @@
 // MacNearUnlockiOS/Assets.xcassets/AppIcon.appiconset and docs/logo.png.
 // Pure CoreGraphics vector drawing, so every size is rendered crisply rather
 // than downscaled. Original design: an open padlock whose body carries a
-// scan frame with a check mark — "approved by a face scan, unlocked".
+// scan frame with a check mark: "approved by a face scan, unlocked".
 
 import CoreGraphics
 import Foundation

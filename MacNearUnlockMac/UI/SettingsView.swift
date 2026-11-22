@@ -149,12 +149,12 @@ struct AuthenticationSettingsView: View {
         Form {
             Section {
                 Toggle("Authentication-only mode", isOn: $settings.authenticationOnly)
-                Text("Verifies every Face ID approval end-to-end — Secure Enclave signature, this Mac, this account, fresh 256-bit challenge, expiry, lock state and replay — and then stops. It never types, stores or changes anything related to your login. Recommended.")
+                Text("Verifies every Face ID approval end-to-end (Secure Enclave signature, this Mac, this account, fresh 256-bit challenge, expiry, lock state and replay) and then stops. It never types, stores or changes anything related to your login. Recommended.")
                     .font(.caption).foregroundStyle(.secondary)
             }
             Section("Requests") {
                 Toggle("Require request from iPhone", isOn: $settings.requirePhoneInitiation)
-                Text("When on, the Mac never pushes a request on its own; you start each attempt with a tap in the foreground iPhone app. Every approval always requires a fresh Face ID match on the iPhone — that cannot be turned off.")
+                Text("When on, the Mac never pushes a request on its own; you start each attempt with a tap in the foreground iPhone app. Every approval always requires a fresh Face ID match on the iPhone; that cannot be turned off.")
                     .font(.caption).foregroundStyle(.secondary)
                 LabeledContent("Approval expires after") {
                     HStack {
@@ -226,7 +226,7 @@ struct SecuritySettingsView: View {
             Section {
                 Label("Experimental and not an Apple authentication API", systemImage: "exclamationmark.triangle.fill").foregroundStyle(.orange)
                 Text("""
-                This optional adapter stores your Mac login password on this Mac (encrypted to a Secure Enclave key that needs your local Mac password or Apple Watch to arm) and, after a verified Face ID approval, types it into the lock screen with synthetic keyboard events — the same technique Glance uses. Storing a reversible copy of your password increases risk: anyone who can run code as you while it is armed could misuse it. It may stop working in any macOS update, never works after restart/logout/FileVault pre-boot, and your password always remains the normal way in.
+                This optional adapter stores your Mac login password on this Mac (encrypted to a Secure Enclave key that needs your local Mac password or Apple Watch to arm) and, after a verified Face ID approval, types it into the lock screen with synthetic keyboard events (the same technique Glance uses). Storing a reversible copy of your password increases risk: anyone who can run code as you while it is armed could misuse it. It may stop working in any macOS update, never works after restart/logout/FileVault pre-boot, and your password always remains the normal way in.
                 """)
                 .font(.caption).foregroundStyle(.secondary)
                 if !ExperimentalCredentialAdapter.isCompiledIn {

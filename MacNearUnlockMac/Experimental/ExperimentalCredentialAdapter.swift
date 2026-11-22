@@ -1,6 +1,6 @@
 //
 //  ExperimentalCredentialAdapter.swift
-//  MacNearUnlock — EXPERIMENTAL, OFF BY DEFAULT
+//  MacNearUnlock: EXPERIMENTAL, OFF BY DEFAULT
 //
 //  The only component that can act on a verified approval beyond reporting it.
 //  It runs solely when ALL of the following hold (see CredentialEntryPolicy, which
@@ -153,7 +153,7 @@ final class ExperimentalCredentialAdapter: ObservableObject {
         if let denial = CredentialEntryPolicy.evaluate(inputs) {
             let outcome: ApprovalOutcome = denial == .adapterDisabled ? .verifiedAuthenticationOnly : .failed
             let detail = denial == .adapterDisabled
-                ? "Approval verified. Credential entry is off, so the Mac stays locked — enter your password manually."
+                ? "Approval verified. Credential entry is off, so the Mac stays locked; enter your password manually."
                 : "Approval verified, but credential entry refused: \(denial.rawValue)."
             finish(approval, engine: engine, outcome: outcome, detail: detail)
             return

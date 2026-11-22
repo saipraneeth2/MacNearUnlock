@@ -39,11 +39,11 @@ Pairing uses a QR code (or a 16-character code) shown on the Mac, a one-time TLS
 
 | Area | Status |
 | --- | --- |
-| Protocol, canonical encoding, signing/verification, replay/expiry/wrong-device/revocation checks, state machine, rate limits | **Implemented and unit-tested** (`swift test`, `xcodebuild test` on macOS and the iOS 27.2 Simulator) |
+| Protocol, canonical encoding, signing/verification, replay/expiry/wrong-device/revocation checks, state machine, rate limits | **Implemented and unit-tested** (`swift test`, `xcodebuild test` on macOS and on iOS 27.2 and 26.4 Simulators) |
 | Pairing handshake (QR fingerprint pinning, SAS, transcript signatures, burn after wrong codes) | **Implemented; loopback-tested over real TLS** with software keys |
 | Session protocol over TLS-PSK + exporter binding (auth-only, forged Mac, unpaired device, binder forgery, replay, lost connection, sleep/unlock invalidation, revocation both ways) | **Implemented; loopback-tested over real TLS** |
-| Mac menu bar app (settings, pairing window, pill, launch at login, session monitoring) | **Implemented, builds without warnings, smoke-launched** (signed with an Apple Development identity). Not exercised against a physical iPhone. |
-| iPhone app (Secure Enclave + Face ID signer, QR scanning, Bonjour, approvals) | **Implemented, builds for Simulator and device (unsigned)**. Needs a physical Face ID iPhone and provisioning; see [docs/SETUP.md](docs/SETUP.md). |
+| Mac menu bar app (settings, pairing window, pill, launch at login, session monitoring) | **Implemented and hardware-tested** on a Mac mini (M4) with an iPhone 16 Pro Max; builds with 0 compiler warnings. Results: [docs/TESTING.md](docs/TESTING.md). |
+| iPhone app (Secure Enclave + Face ID signer, QR scanning, Bonjour, approvals) | **Implemented and hardware-tested** on an iPhone 16 Pro Max (iOS 27.2.1). Needs a physical Face ID iPhone and provisioning; see [docs/SETUP.md](docs/SETUP.md). |
 | Lock on departure | Implemented, **off**, cannot be enabled until a manual test lock succeeds. Not proximity. |
 | Experimental lock-screen credential entry | Implemented behind a compile flag + runtime gates, **off, not validated**; see [docs/EXPERIMENTAL_ADAPTER.md](docs/EXPERIMENTAL_ADAPTER.md) |
 | Native macOS login authorization by iPhone Face ID; Face ID while the iPhone app is backgrounded; UI over the lock screen; anything after restart/logout/pre-boot | **Not possible with public APIs** (and the last one is deliberately refused) |
