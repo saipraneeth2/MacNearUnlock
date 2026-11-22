@@ -6,7 +6,7 @@
 | --- | --- |
 | `swift test` in `MacNearUnlockShared` | **82 tests, 0 failures** (~7.5 s) |
 | `xcodebuild test -scheme MacNearUnlockShared -destination 'platform=macOS'` | **82 / 0** |
-| `xcodebuild test … -destination 'platform=iOS Simulator,name=iPhone 17 Pro'` (iOS 27.2) | **82 / 0** — includes the TLS-PSK loopback tests on the iOS runtime |
+| `xcodebuild test … -destination 'platform=iOS Simulator,name=iPhone 17 Pro'` (iOS 27.2) | **82 / 0**, includes the TLS-PSK loopback tests on the iOS runtime |
 | `MacNearUnlockMac` Debug, signed (Apple Development, manual, hardened runtime) | Build succeeded, 0 warnings; `codesign --verify --deep --strict` OK |
 | `MacNearUnlockMac` Release, unsigned | Build succeeded |
 | `MacNearUnlockiOS` Debug, iOS Simulator | Build succeeded, 0 warnings; launched in Simulator, empty state renders |
@@ -42,7 +42,7 @@ Mocks: software P-256 keys stand in for the Secure Enclave, `FailingSigner` for 
 
 ## Hardware results
 
-**2026-11-21 — Mac mini (M4, Mac16,10), macOS 27.0.1, Dell 1080p display; iPhone 16 Pro Max, iOS 27.2.1 (24B156).** Mac app built from `7f6db2b`, iPhone app from `25eb7d1`, authentication-only mode on. Evidence is the Mac app's engine log (`log show --info --predicate 'subsystem == "MacNearUnlock"'`).
+**2026-11-21: Mac mini (M4, Mac16,10), macOS 27.0.1, Dell 1080p display; iPhone 16 Pro Max, iOS 27.2.1 (24B156).** Mac app built from `7f6db2b`, iPhone app from `25eb7d1`, authentication-only mode on. Evidence is the Mac app's engine log (`log show --info --predicate 'subsystem == "MacNearUnlock"'`).
 
 | # | Result | Evidence |
 | --- | --- | --- |
@@ -90,6 +90,6 @@ Run these on the real Mac mini and a Face ID iPhone. Record pass/fail in the res
 | H15 | Revoke on Mac while iPhone connected / disconnected | Phone notified / next connection fails |
 | H16 | Turn off Wi-Fi on iPhone mid-request | Lost connection, request invalidated, reconnects later |
 | H17 | Lock on departure: test lock, enable, background iPhone app | Mac locks after grace period (and you see why it is not proximity) |
-| H18 | Experimental adapter — see EXPERIMENTAL_ADAPTER.md §Validation | Only with explicit decision to store the password |
+| H18 | Experimental adapter; see EXPERIMENTAL_ADAPTER.md §Validation | Only with explicit decision to store the password |
 
 Bonjour impersonation on a real network (H-optional): advertise `_mnunlock._tcp` with a copied TXT `mid` from another machine (`dns-sd -R`); the iPhone must fail to connect or reject requests.

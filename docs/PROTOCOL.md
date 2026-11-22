@@ -4,11 +4,11 @@ Source of truth: `MacNearUnlockShared/Sources/MacNearUnlockShared`.
 
 ## Transport
 
-* TCP via Network.framework, wrapped in **TLS 1.2 with `TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256` (0xCCAC)** — mutual authentication by pre-shared key, ephemeral ECDHE (forward secrecy), AEAD records. Min = max = TLS 1.2; the negotiated version/suite is checked before use.
+* TCP via Network.framework, wrapped in **TLS 1.2 with `TLS_ECDHE_PSK_WITH_CHACHA20_POLY1305_SHA256` (0xCCAC)**: mutual authentication by pre-shared key, ephemeral ECDHE (forward secrecy), AEAD records. Min = max = TLS 1.2; the negotiated version/suite is checked before use.
 * **Why not TLS 1.3 or certificates?** Probed on macOS 27.2 SDK: TLS 1.3 with an external PSK fails (`-9858 handshake failed`); TLS 1.2 ECDHE-PSK works, a server with several PSKs selects the client's identity correctly, a wrong key fails with `-9820 bad MAC` and an unknown identity with `-9864`. Self-signed certificate pinning would need hand-built X.509 and a `SecIdentity`; PSK gives the same pinning property without a CA or certificate parsing.
 * **Channel binding.** TLS does not tell the server which PSK the client used, so the first message carries `binder = HMAC-SHA256(channelKey, canonical(client-hello domain, pairingID, deviceID, exporter))`, where `exporter` is the RFC 5705 exporter (`EXPORTER-MacNearUnlock-v1`, 32 bytes) of this TLS session. The Mac answers with a server binder under the same key (with its Mac ID). Both are compared in constant time.
 * Bonjour: `_mnunlock._tcp` (paired sessions; TXT `v=1`, `mid=<Mac ID>`; preferred port 47311, falls back to any) and `_mnupair._tcp` (only while a pairing invitation is open). TXT data is untrusted and only selects an endpoint to try.
-* Framing: `u32be length | JSON(WireMessage)`; length 1…16384. JSON is a container only — nothing is ever signed over JSON. Every decoded message is validated (`WireMessage.validate()`): exact lengths for nonces (32), public keys (65, on-curve), X25519 keys (32), binders (32), DER signatures (8…72); string byte limits; no control characters; protocol version 1.
+* Framing: `u32be length | JSON(WireMessage)`; length 1…16384. JSON is a container only; nothing is ever signed over JSON. Every decoded message is validated (`WireMessage.validate()`): exact lengths for nonces (32), public keys (65, on-curve), X25519 keys (32), binders (32), DER signatures (8…72); string byte limits; no control characters; protocol version 1.
 * Limits: 8 connections, hello within 5 s, 20-message burst refilling at 5/s, idle timeout (default 45 s; the phone pings every 15 s), 5 suspicious messages → disconnect.
 
 ## Canonical signing bytes
@@ -28,7 +28,7 @@ Strings are NFC-normalised UTF-8; integers big-endian; UUIDs as 16 raw bytes. Do
 | `MacNearUnlock/v1/pairing-confirm` | iPhone SE key (Face ID) | Pairing confirmation |
 | `MacNearUnlock/v1/pairing-complete` | Mac identity key | Pairing completion |
 | `…/client-hello`, `…/server-hello` | HMAC (channel key) | Channel binding |
-| `…/sas`, `…/channel-psk`, `…/pairing-psk` | — | Key/SAS derivation labels |
+| `…/sas`, `…/channel-psk`, `…/pairing-psk` | n/a | Key/SAS derivation labels |
 
 ## Challenge (`UnlockRequest`)
 

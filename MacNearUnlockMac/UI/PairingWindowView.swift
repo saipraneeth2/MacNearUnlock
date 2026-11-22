@@ -102,7 +102,7 @@ struct PairingWindowView: View {
         .font(.callout)
         HStack {
             Button("Codes Don't Match") { model.rejectPairingCode() }
-            Button("Codes Match — Trust This iPhone") { model.confirmPairingCode() }
+            Button("Codes Match: Trust This iPhone") { model.confirmPairingCode() }
                 .keyboardShortcut(.defaultAction)
                 .disabled(macConfirmed)
         }

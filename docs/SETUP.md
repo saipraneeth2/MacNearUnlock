@@ -27,23 +27,23 @@ With a provisioning profile that grants a keychain access group, the Mac app use
 
 ## 2. Mac app
 
-1. In Xcode's toolbar choose **MacNearUnlockMac › My Mac** and run (or copy the built `MacNearUnlockMac.app` to `/Applications` and open it). Running the iPhone scheme does not start the Mac app — each Run starts one app. A lock/shield icon appears in the menu bar; there is no Dock icon. While no iPhone is paired, the **Pair iPhone** window opens automatically at launch (and again if you open the app while it is already running); afterwards a short on-screen message points to the menu bar icon.
+1. In Xcode's toolbar choose **MacNearUnlockMac › My Mac** and run (or copy the built `MacNearUnlockMac.app` to `/Applications` and open it). Running the iPhone scheme does not start the Mac app; each Run starts one app. A lock/shield icon appears in the menu bar; there is no Dock icon. While no iPhone is paired, the **Pair iPhone** window opens automatically at launch (and again if you open the app while it is already running); afterwards a short on-screen message points to the menu bar icon.
 2. Settings › General › *Open MacNearUnlock at login* (uses `SMAppService.mainApp`; if macOS asks, approve it in System Settings › General › Login Items).
-3. The first time the app listens, macOS asks for **Local Network** access — allow it.
+3. The first time the app listens, macOS asks for **Local Network** access; allow it.
 4. Leave **Authentication-only mode** on.
 
 ## 3. iPhone app
 
 1. Connect the iPhone, select it as the run destination for **MacNearUnlockiOS**, enable Developer Mode on the phone if asked, and run.
 2. Allow **Local Network** (to find the Mac) and **Camera** (only for scanning the pairing QR code).
-3. The app requires Face ID and a device passcode. In the Simulator it explains that a Secure Enclave is required and refuses to pair — by design.
+3. The app requires Face ID and a device passcode. In the Simulator it explains that a Secure Enclave is required and refuses to pair, by design.
 
 ## 4. Pair
 
 1. Mac: menu bar icon › **Pair iPhone…**. A QR code and a 16-character code appear (valid 2 minutes, single use).
 2. iPhone: **+** › *Scan QR Code* (or *Enter Code Manually* and pick the Mac).
 3. Both screens show the same 6 digits and 4 words. Compare them.
-4. Mac: **Codes Match — Trust This iPhone**. iPhone: **Codes Match — Confirm with Face ID**.
+4. Mac: **Codes Match: Trust This iPhone**. iPhone: **Codes Match: Confirm with Face ID**.
 5. Both show "Paired". The Mac's Devices tab lists the iPhone with its key fingerprint.
 
 If anything differs or a warning appears, cancel. Re-pairing the same Mac on the iPhone replaces the old key.
@@ -66,7 +66,7 @@ Face ID is only requested while the app is in the foreground. It is never shown 
 ## 7. Optional features
 
 * **Lock on departure** (Settings › Security): run *Test Lock Now* (needs Accessibility for event posting), then enable. Remember it triggers whenever the iPhone app stops being connected, including when you switch apps.
-* **Experimental credential entry**: read [EXPERIMENTAL_ADAPTER.md](EXPERIMENTAL_ADAPTER.md) first. Every step — risk acknowledgement, turning off authentication-only, entering your Mac password in the app's own sheet, granting Accessibility, arming with your Mac password — is done by you, locally, on the Mac.
+* **Experimental credential entry**: read [EXPERIMENTAL_ADAPTER.md](EXPERIMENTAL_ADAPTER.md) first. Every step (risk acknowledgement, turning off authentication-only, entering your Mac password in the app's own sheet, granting Accessibility, arming with your Mac password) is done by you, locally, on the Mac.
 
 ## Removing everything
 

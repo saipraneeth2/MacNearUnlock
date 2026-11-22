@@ -247,7 +247,7 @@ struct PairingFlowView: View {
                 Button {
                     flow.confirm()
                 } label: {
-                    Label("Codes Match — Confirm with Face ID", systemImage: "faceid").frame(maxWidth: .infinity)
+                    Label("Codes Match: Confirm with Face ID", systemImage: "faceid").frame(maxWidth: .infinity)
                 }
                 .buttonStyle(.borderedProminent)
                 .controlSize(.large)

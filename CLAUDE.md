@@ -1,4 +1,4 @@
-# CLAUDE.md — working on MacNearUnlock
+# CLAUDE.md: working on MacNearUnlock
 
 Security-sensitive project: an iPhone Face ID approval protocol for a locked Mac. Read `SECURITY.md` before changing anything in `MacNearUnlockShared/Sources/.../Engine`, `Crypto`, `Pairing`, `Transport`, or `MacNearUnlockMac/Experimental`.
 
@@ -16,7 +16,7 @@ Signing settings live in `Config/Local.xcconfig` (gitignored; template `Config/L
 ## Layout
 
 * `MacNearUnlockShared` (Swift 6 language mode): all protocol logic and the Mac/iPhone engines. Put new logic here so it can be unit-tested; keep platform glue in the apps.
-* `MacNearUnlockMac` / `MacNearUnlockiOS` (Swift 5 mode): Xcode 16+ *synchronized folders* — new files in these folders are picked up automatically; do not hand-add file references to `project.pbxproj`.
+* `MacNearUnlockMac` / `MacNearUnlockiOS` (Swift 5 mode): Xcode 16+ *synchronized folders*: new files in these folders are picked up automatically; do not hand-add file references to `project.pbxproj`.
 * `MacNearUnlockMac/Experimental`: credential adapter, wrapped in `#if EXPERIMENTAL_CREDENTIAL_ADAPTER`.
 
 ## Invariants (do not weaken; add a test when touching them)
@@ -33,8 +33,8 @@ Signing settings live in `Config/Local.xcconfig` (gitignored; template `Config/L
 
 ## Hard rules for agents
 
-* Never ask for, type, store or echo the user's Mac login password or Apple Account password — not in chat, terminal, files or tests. Credential setup happens only in the app's local sheet, by the user.
+* Never ask for, type, store or echo the user's Mac login password or Apple Account password, not in chat, terminal, files or tests. Credential setup happens only in the app's local sheet, by the user.
 * Never grant TCC permissions, edit system settings, disable SIP or run privileged installs. Ask before locking the screen or doing anything that changes login state.
 * Do not use private frameworks (SkyLight, loginwindow SPI, `SACLockScreenImmediate`, …).
-* `FramedConnection.cancel()` must capture `self` strongly (a weak capture once left sockets open — see the lost-connection test).
+* `FramedConnection.cancel()` must capture `self` strongly (a weak capture once left sockets open; see the lost-connection test).
 * On macOS, a keychain *lookup* without a keychain-access-group entitlement reports "not found", a *write* reports `errSecMissingEntitlement`; `KeychainStore` probes with a write for that reason.

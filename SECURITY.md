@@ -1,6 +1,6 @@
 # Security model and threat analysis
 
-MacNearUnlock lets a paired iPhone, after a fresh Face ID match, approve a short-lived challenge issued by a locked Mac. This document states what is protected, against whom, how, and what remains possible. If any claim here disagrees with the code, the code is wrong — open an issue.
+MacNearUnlock lets a paired iPhone, after a fresh Face ID match, approve a short-lived challenge issued by a locked Mac. This document states what is protected, against whom, how, and what remains possible. If any claim here disagrees with the code, the code is wrong; open an issue.
 
 ## Non-negotiable rules
 
@@ -10,7 +10,7 @@ MacNearUnlock lets a paired iPhone, after a fresh Face ID match, approve a short
 4. **Every approval needs a fresh Face ID match, enforced by the iPhone's Secure Enclave**, not by an app boolean. No passcode fallback.
 5. **Bonjour/network presence is never authorization and never "proximity".**
 6. **Authentication-only mode is the default.** The experimental credential adapter is off, isolated, and gated (see below).
-7. **No secrets in logs.** Logs contain shortened request IDs and outcomes only — never passwords, keys, nonces, full signatures or channel keys.
+7. **No secrets in logs.** Logs contain shortened request IDs and outcomes only, never passwords, keys, nonces, full signatures or channel keys.
 
 ## Assets
 
@@ -21,11 +21,11 @@ MacNearUnlock lets a paired iPhone, after a fresh Face ID match, approve a short
 | Per-pairing channel key (256-bit) | Mac Keychain; iPhone Keychain (`WhenUnlockedThisDeviceOnly`) | Derived from ephemeral X25519 + transcript hash; used as TLS-PSK and binder key |
 | Trusted-device list (pinned keys) | Mac Keychain (one item, not UserDefaults) | Keychain integrity; data-protection keychain when entitled, otherwise login keychain ACL'd to the app signature |
 | Mac login password (experimental only) | Mac Keychain, ChaCha20-Poly1305 ciphertext | Key derived via ECDH with a Secure Enclave key requiring local user presence; armed in memory ≤ 12 h; never leaves the Mac |
-| Access to the locked session | — | The whole protocol; final gate is the experimental adapter's policy |
+| Access to the locked session | n/a | The whole protocol; final gate is the experimental adapter's policy |
 
 ## Adversaries and mitigations
 
-### A1 — Attacker on the same network (passive or active)
+### A1: Attacker on the same network (passive or active)
 Can sniff, advertise Bonjour services, spoof names/TXT records, MITM TCP, replay traffic, flood connections.
 
 * **Forged Bonjour advertiser / impersonated Mac:** connections require TLS-PSK with the per-pairing key (TLS 1.2 `ECDHE_PSK_WITH_CHACHA20_POLY1305`); an advertiser without it fails the handshake. Even with the key, every challenge must be signed by the pinned Mac identity key; the iPhone rejects anything else *before* showing it or prompting for Face ID. *Tests:* `testForgedBonjourAdvertiserCannotImpersonatePairedMac`, `testForgedMacWithStolenChannelKeyCannotObtainApproval`.
@@ -36,33 +36,33 @@ Can sniff, advertise Bonjour services, spoof names/TXT records, MITM TCP, replay
 * **Downgrade:** only protocol version 1, only TLS 1.2 with the pinned suite; the exporter is refused if any other version/suite was negotiated.
 * **Flooding:** ≤ 8 connections, 5-second hello deadline, 20-message burst / 5 msg/s per connection, 16 KiB frame cap, 6 challenges/min per device, idle timeout, connection dropped after 5 suspicious messages. A LAN attacker can still jam Wi-Fi; denial of service is out of scope.
 
-### A2 — Pairing-time attacker (key substitution)
+### A2: Pairing-time attacker (key substitution)
 * The QR code carries a one-time 80-bit code (keys the pairing TLS-PSK tunnel) **and** the SHA-256 fingerprint of the Mac identity key. The iPhone aborts if the Mac key differs (`testPairingRejectsMacKeyNotMatchingQRCode`).
 * Both long-term keys sign/confirm a transcript that includes every handshake field and the TLS exporter, so a relay that splits the TLS session changes the transcript.
 * A 6-digit + 4-word verification string from the transcript hash is compared on both screens before **both** sides confirm (Mac: click; iPhone: Face ID signature over the transcript). The Mac stores nothing without the phone's valid confirmation signature (`testPairingAbortsWhenPhoneFaceIDCancelled`).
 * Manual-code pairing has no fingerprint; the verification-string comparison is then the defence.
 * Invitations expire after 2 minutes and are burned after 3 failed TLS handshakes (`testPairingWithWrongCodeFailsAndBurnsInvitation`). Nothing auto-pairs on a device name, Apple Account, IP address or Bluetooth signal.
 
-### A3 — Someone with your iPhone
+### A3: Someone with your iPhone
 * Locked phone: the companion app cannot run its UI; Face ID is still required per approval.
 * Unlocked phone, wrong face: the Secure Enclave refuses to sign. Reuse duration is 0 and the fallback button is hidden; `.biometryCurrentSet` cannot be satisfied with the passcode.
 * Attacker enrols their own face: the key is permanently invalidated; the app also compares the enrolment hash and demands re-pairing.
-* Mitigation if lost: revoke the iPhone from the Mac's Devices tab — takes effect immediately.
+* Mitigation if lost: revoke the iPhone from the Mac's Devices tab; it takes effect immediately.
 
-### A4 — Coercion or a look-alike
+### A4: Coercion or a look-alike
 Face ID's attention requirement and false-accept rate are Apple's. A coerced user can be made to look at the phone; this design cannot prevent that. Authentication-only mode limits the damage to "the Mac logged a verified approval".
 
-### A5 — Malware running as you on the Mac
-Out of scope for full protection — it can already keylog the password you type. Measures that still help:
+### A5: Malware running as you on the Mac
+Out of scope for full protection: it can already keylog the password you type. Measures that still help:
 * Distributed notifications (`com.apple.screenIsLocked`, …) are hints only; state comes from CGSession, re-read before every decision and polled every 2 s.
 * Hardened runtime (no injection/debugging of the app).
 * Keychain items are ACL'd to the app; on builds without a keychain-access-group entitlement they live in the login keychain, where another app must trigger a user-visible prompt.
 * **Experimental adapter armed:** the wrapping key is in this process's memory for up to 12 hours; a process able to read that memory, or to make this app type into a field it controls, could misuse it. This is the main reason it is off by default.
 
-### A6 — Another macOS account (fast user switching)
+### A6: Another macOS account (fast user switching)
 Challenges are bound to the account that paired. When the console belongs to another user (`kCGSSessionOnConsoleKey == false` or user/UID mismatch) the engine reports *unavailable*, issues nothing and rejects approvals (`testSessionMustStillBeLockedForUnlockAction`).
 
-### A7 — Clock manipulation
+### A7: Clock manipulation
 Validity uses a Mac-local monotonic deadline (`CLOCK_MONOTONIC`, which counts through sleep) **and** the signed wall-clock expiry. Turning the clock back does not extend a challenge (`testWindingWallClockBackDoesNotExtendValidity`). Sleep, unlock, logout, lost connection, settings changes and revocation invalidate pending challenges.
 
 ## Approval verification (Mac), in order
@@ -75,7 +75,7 @@ Validity uses a Mac-local monotonic deadline (`CLOCK_MONOTONIC`, which counts th
 6. Fresh CGSession read: `.unlockSession` requires the expected user's locked console session; `.authenticationTest` requires the expected user's session.
 7. Challenge retired; a single-use `VerifiedApproval` token is returned. Only `ChallengeAuthority` can create one; consuming it is atomic and one-shot.
 
-## Proximity — what is and is not claimed
+## Proximity: what is and is not claimed
 
 * Bonjour proves only that both devices can reach each other on a local network (which may be the whole building, a VPN or a bridged network). The UI says "same network", never "nearby".
 * CoreBluetooth RSSI was evaluated and **not** used: it fluctuates by tens of dB with body orientation and walls, iOS restricts background BLE advertising/scanning, and RSSI is trivially relayed or amplified. It could only ever be a coarse hint, never a gate.

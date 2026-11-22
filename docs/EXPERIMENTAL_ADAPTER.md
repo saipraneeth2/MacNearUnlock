@@ -1,4 +1,4 @@
-# Experimental lock-screen credential adapter — evaluation
+# Experimental lock-screen credential adapter: evaluation
 
 **Status: implemented, compiled in (`EXPERIMENTAL_CREDENTIAL_ADAPTER`), OFF by default, NOT validated on a real lock screen.**
 
@@ -6,7 +6,7 @@
 
 Validation needs three things that only you can do, and none were done in the automated session:
 
-1. Store your **real Mac login password** — typed by you into the app's local sheet (never into a chat, terminal or file).
+1. Store your **real Mac login password**, typed by you into the app's local sheet (never into a chat, terminal or file).
 2. Grant **Accessibility** to MacNearUnlock in System Settings (no permission is granted programmatically).
 3. **Lock the Mac** and approve from a **physical Face ID iPhone**, which also requires the iPhone build to be provisioned.
 
@@ -19,14 +19,14 @@ Until that happens the adapter stays disabled and its real-world behaviour on ma
 | Who decides | loginwindow / opendirectoryd / Secure Enclave | An app in your session decides, then types the password |
 | Credential | Verified, never stored reversibly | Reversible copy stored (encrypted) on this Mac |
 | Mechanism | Supported authentication APIs | Synthetic keyboard events (CGEvent, Accessibility) |
-| After restart / logout / FileVault pre-boot | Works | Never works (app not running) — by design |
+| After restart / logout / FileVault pre-boot | Works | Never works (app not running), by design |
 | Stability | Supported | May break in any macOS update |
 | Focus | Built in | Inferred (secure input active, loginwindow owner when determinable) |
 | Audit | System logs | App's own log |
 
 ## Design
 
-* `CredentialVault`: password verified with Open Directory (`ODRecord.verifyPassword`) so a typo is never stored and later replayed into the lock screen; encrypted with ChaCha20-Poly1305 under a key from ECDH with a **Secure Enclave key whose ACL is `.privateKeyUsage + .userPresence`**. Arming requires local user presence on the Mac (password dialog / Apple Watch / Touch ID keyboard) — an iPhone Face ID result cannot satisfy a Mac Keychain/SE ACL and is not assumed to. Without a Secure Enclave the vault refuses to store (fail closed). Armed state is memory-only, ≤ 12 h.
+* `CredentialVault`: password verified with Open Directory (`ODRecord.verifyPassword`) so a typo is never stored and later replayed into the lock screen; encrypted with ChaCha20-Poly1305 under a key from ECDH with a **Secure Enclave key whose ACL is `.privateKeyUsage + .userPresence`**. Arming requires local user presence on the Mac (password dialog / Apple Watch / Touch ID keyboard); an iPhone Face ID result cannot satisfy a Mac Keychain/SE ACL and is not assumed to. Without a Secure Enclave the vault refuses to store (fail closed). Armed state is memory-only, ≤ 12 h.
 * `ExperimentalCredentialAdapter`: consumes the `VerifiedApproval`, evaluates `CredentialEntryPolicy` (all of: enabled, acknowledged, auth-only off, < 3 consecutive failures, `.unlockSession` action, consumed, < 5 s old, expected user logged in + on console + locked, awake, Accessibility + event posting, secure input active and not owned by another process, vault armed, ≤ 5 attempts/hour, ≥ 10 s apart), re-checks the session right before typing, types via `KeystrokeInjector` (no pasteboard), then confirms success through CGSession within 6 s. Three consecutive failures disable it and disarm the vault.
 * Isolation: everything lives in `MacNearUnlockMac/Experimental` inside `#if EXPERIMENTAL_CREDENTIAL_ADAPTER`; remove the flag from the target's *Active Compilation Conditions* to build without it.
 
